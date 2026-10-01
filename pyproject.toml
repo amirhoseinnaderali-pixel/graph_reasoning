@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gcr-llm"
+version = "0.1.0"
+description = "Graph-Structured Collective Reasoning for Multi-Model Language Model Inference"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "scikit-learn>=1.3",
+  "networkx>=3.1",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+embeddings = ["sentence-transformers>=3.0", "torch>=2.0"]
+visualization = ["matplotlib>=3.7"]
+hdbscan = ["hdbscan>=0.8"]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100

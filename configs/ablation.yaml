@@ -1,0 +1,17 @@
+seed: 42
+base:
+  embedding: {backend: tfidf, model_name: mixedbread-ai/mxbai-embed-large-v1, max_features: 2048}
+  graph: {similarity_threshold: 0.50, top_k_neighbors: 5, include_similarity_edges: true, include_dependency_edges: true, cross_model_similarity_only: true, dependency_weight: 1.0}
+  community: {enabled: true, algorithm: louvain, resolution: 1.0}
+  ranking: {method: pagerank, damping: 0.85, max_iter: 100, tolerance: 1.0e-6}
+variants:
+  - {id: A1_direct_ranking, ranking: {method: direct_similarity}}
+  - {id: A2_no_community, community: {enabled: false}}
+  - {id: A3_no_centrality, ranking: {method: community_size}}
+  - {id: A4_similarity_without_cross_model_filter, graph: {cross_model_similarity_only: false}}
+  - {id: A5_dependency_only, graph: {include_similarity_edges: false, include_dependency_edges: true}}
+  - {id: A6_similarity_only, graph: {include_similarity_edges: true, include_dependency_edges: false}}
+  - {id: A7_tfidf, embedding: {backend: tfidf}}
+  - {id: A8_high_threshold, graph: {similarity_threshold: 0.75}}
+  - {id: A9_low_threshold, graph: {similarity_threshold: 0.35}}
+  - {id: A10_top_k_10, graph: {top_k_neighbors: 10}}

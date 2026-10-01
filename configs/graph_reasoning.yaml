@@ -1,0 +1,6 @@
+seed: 42
+embedding: {backend: tfidf, model_name: mixedbread-ai/mxbai-embed-large-v1, max_features: 2048}
+graph: {similarity_threshold: 0.50, top_k_neighbors: 5, include_similarity_edges: true, include_dependency_edges: true, cross_model_similarity_only: true, dependency_weight: 1.0}
+community: {enabled: true, algorithm: louvain, resolution: 1.0}
+ranking: {method: pagerank, damping: 0.85, max_iter: 100, tolerance: 1.0e-6}
+experiment: {deterministic: true}

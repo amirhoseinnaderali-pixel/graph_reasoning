@@ -1,0 +1,72 @@
+name: research-validation
+# CI for the reproducible research framework
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - research/gcr-llm-framework
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Unit tests
+        run: pytest -q
+      - name: Smoke experiment
+        shell: bash
+        run: |
+          cat > /tmp/smoke.json <<'JSON'
+          {
+            "problems": [{
+              "problem_id": "smoke-1",
+              "problem": "Which candidate contains the reference answer?",
+              "candidates": [
+                {
+                  "candidate_id": "a",
+                  "model": "model-a",
+                  "answer": "reference answer",
+                  "confidence": 0.6,
+                  "trajectory": [
+                    {"node_id": "a1", "content": "identify the reference answer", "dependencies": []},
+                    {"node_id": "a2", "content": "verify the reference answer", "dependencies": ["a1"]}
+                  ],
+                  "is_correct": true
+                },
+                {
+                  "candidate_id": "b",
+                  "model": "model-b",
+                  "answer": "alternative answer",
+                  "confidence": 0.5,
+                  "trajectory": [
+                    {"node_id": "b1", "content": "identify an alternative answer", "dependencies": []}
+                  ],
+                  "is_correct": false
+                },
+                {
+                  "candidate_id": "c",
+                  "model": "model-c",
+                  "answer": "another answer",
+                  "confidence": 0.4,
+                  "trajectory": [
+                    {"node_id": "c1", "content": "identify another answer", "dependencies": []}
+                  ],
+                  "is_correct": false
+                }
+              ]
+            }]
+          }
+          JSON
+          python scripts/run_experiment.py --input /tmp/smoke.json --config configs/graph_reasoning.yaml --output /tmp/smoke.json.results
+          python scripts/evaluate.py --results /tmp
+          test -s /tmp/smoke.json.results
+          python experiments/ranking_comparison.py --input /tmp/smoke.json --config configs/graph_reasoning.yaml --output /tmp/ranking.json
+      - name: Ablation smoke
+        run: python scripts/run_ablation.py --input /tmp/smoke.json --config configs/ablation.yaml --output-dir /tmp/ablations
