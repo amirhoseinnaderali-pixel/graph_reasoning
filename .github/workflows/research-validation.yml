@@ -1,4 +1,5 @@
 name: research-validation
+# CI for the reproducible research framework
 
 on:
   pull_request:
