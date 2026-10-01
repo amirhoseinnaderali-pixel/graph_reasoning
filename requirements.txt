@@ -1,0 +1,8 @@
+numpy
+networkx
+scikit-learn
+matplotlib
+sentence-transformers
+google-genai
+ollama
+pytest
